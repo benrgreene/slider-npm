@@ -32,6 +32,10 @@ let mod = {
     if (sliderOptions.hasArrows) {
       this.setUpArrows(sliderObject);
     }
+    // Setup slider timer
+    if (sliderOptions.timer) {
+      this.setUpTimer(sliderObject);
+    }
   },
   // Create a new blank/default slider object
   newSliderObject: function (sliderOptions) {
@@ -102,9 +106,21 @@ let mod = {
     let newHeight = sliderObject.slides[sliderObject.currentSlide].offsetHeight;
     sliderObject.sliderContainer.style.height = newHeight + 'px';
   },
+  // slider timer for moving the slide along
+  setUpTimer: function (slider) {
+    let self = this;
+    slider.sliderTimer = setInterval(() => {
+      self.moveSlide(slider, 1);
+    }, slider.options.timer);
+  },
   // reset the slider timer
-  resetSlideTimer: function() {
-
+  resetSlideTimer: function(slider) {
+    // reset the slider timer
+    if (slider.sliderTimer) {
+      clearInterval(slider.sliderTimer);
+      slider.sliderTimer = null; 
+      setUpTimer(slider);
+    }
   },
   // Setup for sliders in general. 
   setupSliderGlobals: function () {
