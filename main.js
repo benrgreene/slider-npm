@@ -36,6 +36,10 @@ let mod = {
     if (sliderOptions.timer) {
       this.setUpTimer(sliderObject);
     }
+    // Setup slider navigation dots
+    if (sliderOptions.hasDots) {
+      this.setUpDots(sliderObject);
+    }
   },
   // Create a new blank/default slider object
   newSliderObject: function (sliderOptions) {
@@ -79,6 +83,36 @@ let mod = {
     slider.sliderContainer.appendChild(leftArrow);
     slider.sliderContainer.appendChild(rightArrow);
   },
+  // Set up the slider dots (and listeners)
+  setUpDots: function(slider) {
+    let dotContainer = document.createElement('ul');
+    dotContainer.classList.add('dot-container');
+    
+    // For all the instance's slides, add a dot to the slider's dot container
+    let self = this;
+    slider.slides.forEach((slide, i) => {
+      let newDot = document.createElement('li');
+      newDot.classList.add('dot');
+      // If it's the first dot, add the 'active dot' class
+      if (0 == i) {
+        newDot.classList.add('dot--active');  
+      }
+      // Add a listener to the dot to move the slider to the coresponding dot
+      newDot.addEventListener('click', function(event) {
+        slider.currentSlide = i;
+        self.moveSlide(slider, 0);
+        self.resetSlideTimer(slider);
+      });
+      dotContainer.appendChild(newDot);
+      slider.dots.push(newDot);
+    });
+    // Add the active dot styling
+    let dotStyleElement = document.createElement('style');
+    dotStyleElement.innerHTML = `${slider.options.slider} .dot--active { background-color: ${slider.options.dotColor}; }`;
+    dotContainer.appendChild(dotStyleElement);
+    // Add dots to the slider container
+    slider.sliderContainer.appendChild(dotContainer);
+  },
   /*
    * Move to a new slide
    */
@@ -100,6 +134,19 @@ let mod = {
     if (slider.options.variableHeight) {
       this.setSliderHeight(slider);
     }
+
+    // Reset dot classes (if dots are enabled)
+    if (slider.options.hasDots) {
+      slider.dots.forEach((dot, index) => {
+        if (index == slider.currentSlide) {
+          // new active slide
+          dot.classList.add('dot--active');
+        } else {
+          // inactive slide
+          dot.classList.remove('dot--active');
+        }
+      });
+    }
   },
   // set the height of the slider to the height of the child
   setSliderHeight: function (sliderObject) {
@@ -119,14 +166,14 @@ let mod = {
     if (slider.sliderTimer) {
       clearInterval(slider.sliderTimer);
       slider.sliderTimer = null; 
-      setUpTimer(slider);
+      this.setUpTimer(slider);
     }
   },
   // Setup for sliders in general. 
   setupSliderGlobals: function () {
     // Add all the styling for the microlibrary
     let styleElement = document.createElement('style');
-    styleElement.innerHTML = ".arrow-left,.arrow-right,.dot-container{padding:10px 15px;background-color:rgba(100,100,100,.8);z-index:10}.slider{position:relative;width:100%;overflow:hidden;transition:height .75s}.slide{position:absolute;display:block;width:100%;transition:left .75s}.arrow-left,.arrow-right{position:absolute;top:50%;color:#FFF;cursor:pointer}.arrow-left{left:0;transform:translateY(-50%) scale(-1,1)}.arrow-right{right:0;transform:translateY(-50%)}.dot-container{position:absolute;bottom:0;left:50%;transform:translateX(-50%);line-height:15px}.dot{position:relative;display:inline-block;border-radius:50%;height:15px;width:15px;background-color:#FFF;cursor:pointer}.dot+.dot{margin-left:15px}";
+    styleElement.innerHTML = ".arrow-left,.arrow-right,.dot-container{margin: 0;padding:10px 15px;background-color:rgba(100,100,100,.8);z-index:10}.slider{position:relative;width:100%;overflow:hidden;transition:height .75s}.slide{position:absolute;display:block;width:100%;transition:left .75s}.arrow-left,.arrow-right{position:absolute;top:50%;color:#FFF;cursor:pointer}.arrow-left{left:0;transform:translateY(-50%) scale(-1,1)}.arrow-right{right:0;transform:translateY(-50%)}.dot-container{position:absolute;bottom:0;left:50%;transform:translateX(-50%);line-height:15px}.dot{position:relative;display:inline-block;border-radius:50%;height:15px;width:15px;background-color:#FFF;cursor:pointer}.dot+.dot{margin-left:15px}";
     document.body.appendChild(styleElement);
     // on resize, we want to reset the slider height for each slider
     let self = this;
