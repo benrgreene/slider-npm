@@ -1,4 +1,4 @@
-let mod = {
+module.exports = {
   sliders: [],
   includedStyles: false,
   /**
@@ -24,10 +24,6 @@ let mod = {
     // set slider position
     this.moveSlide(sliderObject, 0);
 
-    // Set the variable height of the slider
-    if (sliderOptions.variableHeight) {
-      this.setSliderHeight(sliderObject); 
-    }
     // Setup the slider arrows
     if (sliderOptions.hasArrows) {
       this.setUpArrows(sliderObject);
@@ -39,6 +35,13 @@ let mod = {
     // Setup slider navigation dots
     if (sliderOptions.hasDots) {
       this.setUpDots(sliderObject);
+    }
+
+    // On the first image load, resize the slider
+    let firstImage = document.querySelectorAll(`${sliderOptions.slider} img`)[0];
+    let self = this;
+    firstImage.onload = (event) => {
+      self.setSliderHeight(sliderObject);
     }
   },
   // Create a new blank/default slider object
