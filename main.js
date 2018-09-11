@@ -40,8 +40,10 @@ module.exports = {
     // On the first image load, resize the slider
     let firstImage = document.querySelectorAll(`${sliderOptions.slider} img`)[0];
     let self = this;
-    firstImage.onload = (event) => {
-      self.setSliderHeight(sliderObject);
+    if (firstImage) {
+      firstImage.onload = (event) => {
+        self.setSliderHeight(sliderObject);
+      }
     }
   },
   // Create a new blank/default slider object
