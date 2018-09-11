@@ -150,6 +150,14 @@ module.exports = {
         }
       });
     }
+
+    // Dispatch an event for the new slide
+    var slideEvent = new CustomEvent('slideMoved', { detail: {
+      'slide': slider.slides[slider.currentSlide],
+      'direction': direction,
+      'index': slider.currentSlide
+    }});
+    document.dispatchEvent(slideEvent);
   },
   // set the height of the slider to the height of the child
   setSliderHeight: function (sliderObject) {
