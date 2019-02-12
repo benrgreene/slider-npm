@@ -1,6 +1,6 @@
 {
   "name": "brg-slider",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "description": "Slider micro-library using only vanilly javascript",
   "main": "main.js",
   "scripts": {

@@ -40,6 +40,8 @@ Slides can have whatever in them, images, HTML, anything. All direct children of
 * hasArrows: whether or not to add arrows to the slider container (default: true)
 * variableHeight: whether the slider height adapts to the visible child. If this is set to false, then you'll need to set the height yourself. (default: true). 
 * timer: amount of time on a slide before moving along. Not passing a time means there is no timer. (optional)
+* leftArrowContent: the HTML content for the left arrow (optional, defaults to arrow)
+* rightArrowContent: the HTML content for the right arrow (optional, defaults to arrow)
 
 ## Custom Events
 
