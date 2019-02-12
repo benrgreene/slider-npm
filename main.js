@@ -65,22 +65,32 @@ module.exports = {
     options.hasArrows = (undefined != options.hasArrows) ? options.hasArrows : true;
     options.timer = (undefined != options.timer) ? options.timer : false;
     options.dotColor = (undefined != options.dotColor) ? options.dotColor : '#18F';
+    options.leftArrowContent = (undefined != options.leftArrowContent) ? options.leftArrowContent : '&#10145;';
+    options.rightArrowContent = (undefined != options.rightArrowContent) ? options.rightArrowContent : '&#10145;';
     return options;
   },
   // Setup the slider arrows
   setUpArrows: function (slider) {
     let self = this;
+    
     let leftArrow = document.createElement('div');
-    leftArrow.innerHTML = '&#10145;';
+    let rightArrow = document.createElement('div');
+
+    leftArrow.innerHTML = slider.options.leftArrowContent;
+    rightArrow.innerHTML = slider.options.rightArrowContent;
+    
     leftArrow.classList.add('arrow-left');
+    rightArrow.classList.add('arrow-right');
+
+    if ('&#10145;' == slider.options.leftArrowContent) {
+      leftArrow.classList.add('arrow-left--flipped')
+    }
+
     leftArrow.addEventListener('click', (event) => {
       self.moveSlide(slider, -1);
       self.resetSlideTimer(slider);
     });
-   
-    let rightArrow = document.createElement('div');
-    rightArrow.innerHTML = '&#10145;';
-    rightArrow.classList.add('arrow-right');
+    
     rightArrow.addEventListener('click', (event) => {
       self.moveSlide(slider, 1);
       self.resetSlideTimer(slider);
@@ -153,6 +163,14 @@ module.exports = {
         }
       });
     }
+
+    // Dispatch an event for the new slide
+    var slideEvent = new CustomEvent('slideMoved', { detail: {
+      'slide': slider.slides[slider.currentSlide],
+      'index': slider.currentSlide,
+      'direction': (0 < direction) ? 'right' : 'left'
+    }});
+    document.dispatchEvent(slideEvent);
   },
   // set the height of the slider to the height of the child
   setSliderHeight: function (sliderObject) {
@@ -179,7 +197,7 @@ module.exports = {
   setupSliderGlobals: function () {
     // Add all the styling for the microlibrary
     let styleElement = document.createElement('style');
-    styleElement.innerHTML = ".arrow-left,.arrow-right,.dot-container{margin:0;padding: 10px;background-color:rgba(100,100,100,.8);z-index:10}.slider{position:relative;width:100%;overflow:hidden;transition:height .75s}.slide{position:absolute;display:block;width:100%;transition:left .75s}.arrow-left,.arrow-right{position:absolute;top:50%;color:#FFF;cursor:pointer}.arrow-left{left:0;transform:translateY(-50%) scale(-1,1)}.arrow-right{right:0;transform:translateY(-50%)}.dot-container{padding:10px 15px 5px;position:absolute;bottom:0;left:50%;transform:translateX(-50%);display:flex;flex-wrap:wrap;justify-content:center;line-height:15px}.dot{margin: 0 5px 5px;position:relative;display:inline-block;border-radius:50%;height:15px;width:15px;background-color:#FFF;cursor:pointer}";
+    styleElement.innerHTML = ".arrow-left,.arrow-right,.dot-container{margin:0;padding: 10px;background-color:rgba(100,100,100,.8);z-index:10}.slider{position:relative;width:100%;overflow:hidden;transition:height .75s}.slide{position:absolute;display:block;width:100%;transition:left .75s}.arrow-left,.arrow-right{position:absolute;top:50%;color:#FFF;cursor:pointer}.arrow-left{left:0;transform:translateY(-50%)}.arrow-left--flipped{transform:translateY(-50%) scale(-1,1)}.arrow-right{right:0;transform:translateY(-50%)}.dot-container{padding:10px 15px 5px;position:absolute;bottom:0;left:50%;transform:translateX(-50%);display:flex;flex-wrap:wrap;justify-content:center;line-height:15px}.dot{margin: 0 5px 5px;position:relative;display:inline-block;border-radius:50%;height:15px;width:15px;background-color:#FFF;cursor:pointer}";
     document.body.appendChild(styleElement);
     // on resize, we want to reset the slider height for each slider
     let self = this;
